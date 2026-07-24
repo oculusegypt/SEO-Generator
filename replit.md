@@ -4,12 +4,21 @@
 
 ## Run & Operate
 
+- Replit workflow: `SEO Generator` — starts the frontend and API together for the preview
 - `pnpm --filter @workspace/api-server run dev` — API server (port 8080)
-- `pnpm --filter @workspace/seo-generator run dev` — Frontend (port 18531)
+- `PORT=18531 BASE_PATH=/ pnpm --filter @workspace/seo-generator run dev` — Frontend (port 18531)
+- The combined workflow uses API port `8080` and frontend port `18531`; the frontend is served at `/` and the API at `/api`
 - `pnpm run typecheck` — full typecheck
 - `pnpm run build` — typecheck + build
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks & Zod schemas from OpenAPI spec
 - After any OpenAPI change: run codegen before editing frontend
+
+### Replit setup status
+
+- Dependencies install with `pnpm install --frozen-lockfile`
+- API build passes and `/api/healthz` responds with `{"status":"ok"}`
+- Frontend production build passes with `PORT=18531 BASE_PATH=/`
+- The imported frontend currently has pre-existing strict TypeScript errors in Framer Motion animation definitions and localized text literals; these do not prevent the Vite runtime or production build
 
 ## Stack
 

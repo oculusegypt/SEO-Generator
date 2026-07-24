@@ -1,0 +1,1 @@
+- [Workflow shell compatibility](workflow-shell-compatibility.md) — Replit workflows may run under POSIX sh, so avoid Bash-only process-control syntax.
