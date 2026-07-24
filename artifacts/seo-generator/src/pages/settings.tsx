@@ -30,10 +30,11 @@ const GEMINI_MODELS = [
 ];
 
 const QWEN_MODELS = [
-  { value: "qwen3-max",             label: "Qwen3 Max ⭐ (الأفضل)" },
+  { value: "qwen3.7-flash",         label: "Qwen3.7 Flash ⭐ (متاح)" },
+  { value: "qwen3.7-plus",          label: "Qwen3.7 Plus" },
+  { value: "qwen3.7-max",           label: "Qwen3.7 Max" },
   { value: "qwen3-235b-a22b",       label: "Qwen3 235B (أقوى)" },
   { value: "qwen3.5-plus",          label: "Qwen3.5 Plus" },
-  { value: "qwen3.7-max",           label: "Qwen3.7 Max" },
   { value: "qwen-plus-latest",      label: "Qwen Plus Latest" },
   { value: "qwen3.5-flash",         label: "Qwen3.5 Flash (سريع)" },
 ];
@@ -78,9 +79,9 @@ export default function SettingsPage() {
 
   const form = useForm<FormValues>({
     defaultValues: {
-      defaultProvider: "gemini",
+      defaultProvider: "qwen",
       geminiKey: "", geminiModel: "gemini-2.5-flash",
-      qwenKey:   "", qwenModel:   "qwen3-max",
+      qwenKey:   "", qwenModel:   "qwen3.7-flash",
       qwenHost:  "ws-twcxat39x22mi7rg.ap-southeast-1.maas.aliyuncs.com",
       zhipuKey:  "", zhipuModel:  "glm-4-flash",
       openaiKey: "", openaiModel: "gpt-4o-mini",
@@ -91,9 +92,9 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!settings) return;
     form.reset({
-      defaultProvider: settings.defaultProvider ?? "gemini",
+      defaultProvider: settings.defaultProvider ?? "qwen",
       geminiKey: "", geminiModel: settings.providers?.gemini?.model ?? "gemini-2.5-flash",
-      qwenKey:   "", qwenModel:   settings.providers?.qwen?.model   ?? "qwen3-max",
+      qwenKey:   "", qwenModel:   settings.providers?.qwen?.model   ?? "qwen3.7-flash",
       qwenHost:  (settings.providers?.qwen?.baseUrl ?? "").replace("https://","").replace("/compatible-mode/v1","") ||
                  "ws-twcxat39x22mi7rg.ap-southeast-1.maas.aliyuncs.com",
       zhipuKey:  "", zhipuModel:  settings.providers?.zhipu?.model  ?? "glm-4-flash",

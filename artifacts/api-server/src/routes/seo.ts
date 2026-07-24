@@ -1,7 +1,11 @@
 import { Router, type IRouter } from "express";
 import OpenAI from "openai";
 import { GenerateSeoBody } from "@workspace/api-zod";
-import { loadConfig, resolveKey } from "./settings.js";
+import {
+  IMPORTED_QWEN_DEFAULT_MODEL,
+  loadConfig,
+  resolveKey,
+} from "./settings.js";
 
 const router: IRouter = Router();
 
@@ -25,7 +29,7 @@ function getProviderClient(provider: string): { client: OpenAI; model: string } 
       const key  = resolveKey(cfg.qwen?.key, "QWEN_API_KEY") ?? "";
       const host = cfg.qwen?.host || process.env.QWEN_API_HOST || "ws-twcxat39x22mi7rg.ap-southeast-1.maas.aliyuncs.com";
       const base = `https://${host}/compatible-mode/v1`;
-      const model = cfg.qwen?.model || "qwen3-max";
+      const model = cfg.qwen?.model || IMPORTED_QWEN_DEFAULT_MODEL;
       return { client: new OpenAI({ apiKey: key, baseURL: base }), model };
     }
     case "zhipu": {

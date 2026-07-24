@@ -1,6 +1,10 @@
 import { Router, type IRouter } from "express";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
+import {
+  IMPORTED_QWEN_DEFAULT_MODEL,
+  loadImportedProviderConfig,
+} from "../lib/imported-provider-config.js";
 
 const router: IRouter = Router();
 
@@ -17,11 +21,34 @@ interface StoredConfig {
 }
 
 function loadConfig(): StoredConfig {
+  const imported = loadImportedProviderConfig();
+
   try {
-    if (!existsSync(CFG_FILE)) return {};
-    return JSON.parse(readFileSync(CFG_FILE, "utf-8")) as StoredConfig;
+    const stored = existsSync(CFG_FILE)
+      ? (JSON.parse(readFileSync(CFG_FILE, "utf-8")) as StoredConfig)
+      : {};
+
+    return {
+      ...stored,
+      defaultProvider:
+        imported.qwenKey ? "qwen" : stored.defaultProvider,
+      qwen: {
+        ...stored.qwen,
+        key: stored.qwen?.key || imported.qwenKey,
+        host: stored.qwen?.host || imported.qwenHost,
+        model: imported.qwenKey
+          ? IMPORTED_QWEN_DEFAULT_MODEL
+          : stored.qwen?.model,
+      },
+    };
   } catch {
-    return {};
+    return {
+      defaultProvider: imported.qwenKey ? "qwen" : undefined,
+      qwen: {
+        key: imported.qwenKey,
+        host: imported.qwenHost,
+      },
+    };
   }
 }
 
@@ -67,7 +94,7 @@ router.get("/settings", (_req, res) => {
       },
       qwen: {
         name: "Alibaba Qwen",
-        model: cfg.qwen?.model || "qwen3-max",
+        model: cfg.qwen?.model || IMPORTED_QWEN_DEFAULT_MODEL,
         keySet: !!qwenKey,
         keyMasked: maskKey(qwenKey),
         baseUrl: qwenHost ? `https://${qwenHost}/compatible-mode/v1` : "",
@@ -96,7 +123,7 @@ router.put("/settings", (req, res) => {
   const existing = loadConfig();
 
   const updated: StoredConfig = {
-    defaultProvider: body.defaultProvider || existing.defaultProvider || "gemini",
+    defaultProvider: body.defaultProvider || existing.defaultProvider || "qwen",
     openai: {
       key:   body.openaiKey  !== undefined ? (body.openaiKey  || existing.openai?.key)  : existing.openai?.key,
       model: body.openaiModel || existing.openai?.model || "gpt-4o-mini",
@@ -107,7 +134,7 @@ router.put("/settings", (req, res) => {
     },
     qwen: {
       key:   body.qwenKey   !== undefined ? (body.qwenKey   || existing.qwen?.key)   : existing.qwen?.key,
-      model: body.qwenModel  || existing.qwen?.model  || "qwen3-max",
+      model: body.qwenModel  || existing.qwen?.model  || IMPORTED_QWEN_DEFAULT_MODEL,
       host:  body.qwenHost   || existing.qwen?.host   || process.env.QWEN_API_HOST || "",
     },
     zhipu: {
@@ -136,7 +163,7 @@ router.put("/settings", (req, res) => {
     providers: {
       openai: { name: "OpenAI",        model: updated.openai?.model || "gpt-4o-mini",     keySet: !!openaiKey, keyMasked: maskKey(openaiKey) },
       gemini: { name: "Google Gemini", model: updated.gemini?.model || "gemini-2.5-flash", keySet: !!geminiKey, keyMasked: maskKey(geminiKey), baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai/" },
-      qwen:   { name: "Alibaba Qwen",  model: updated.qwen?.model   || "qwen3-max",        keySet: !!qwenKey,   keyMasked: maskKey(qwenKey),   baseUrl: qwenHost ? `https://${qwenHost}/compatible-mode/v1` : "" },
+      qwen:   { name: "Alibaba Qwen",  model: updated.qwen?.model   || IMPORTED_QWEN_DEFAULT_MODEL, keySet: !!qwenKey, keyMasked: maskKey(qwenKey), baseUrl: qwenHost ? `https://${qwenHost}/compatible-mode/v1` : "" },
       zhipu:  { name: "Zhipu GLM",     model: updated.zhipu?.model  || "glm-4-flash",      keySet: !!zhipuKey,  keyMasked: maskKey(zhipuKey),  baseUrl: "https://open.bigmodel.cn/api/paas/v4/" },
     },
   });

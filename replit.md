@@ -47,9 +47,17 @@
 | Provider | Model | Secret (Replit Secrets) | Env Var | Status |
 |---|---|---|---|---|
 | OpenAI | gpt-4o-mini | `OPENAI_API_KEY` | — | Optional |
-| Gemini | gemini-2.0-flash | `GEMINI_API_KEY` | — | ✅ Configured |
-| Qwen | qwen-max | `QWEN_API_KEY` | `QWEN_API_HOST` | ✅ Configured |
-| Zhipu | glm-4-flash | `ZHIPU_API_KEY` | — | ✅ Configured |
+| Gemini | gemini-2.0-flash | `GEMINI_API_KEY` | — | Optional |
+| Qwen | qwen3.7-flash | imported provider export / `QWEN_API_KEY` | `QWEN_API_HOST` | ✅ Imported |
+| Zhipu | glm-4-flash | `ZHIPU_API_KEY` | — | Optional |
+
+### Imported provider configuration
+
+- On API server startup and request handling, `artifacts/api-server/src/lib/imported-provider-config.ts` reads the imported Qwen provider export from `attached_assets/`.
+- The parser uses the `apiKey`, `apiHost`, and `openAiCompatible` fields from that export. The key is server-only and is never returned to the browser or written to logs.
+- Provider precedence is: saved server settings in `data/settings.json`, then Replit environment secrets, then the imported provider export. `data/settings.json` remains ignored by Git.
+- If an imported Qwen key is found, Qwen becomes the default provider on every API startup, even if an older saved settings file selected another provider. The imported configuration uses `qwen3.7-flash`, which is available at the imported workspace endpoint.
+- The current imported asset contains a plaintext credential in a tracked project file. This is functional for the imported project but is not a safe long-term secret store; rotate the key and move it to `QWEN_API_KEY` in Replit Secrets when possible.
 
 ### Qwen MaaS Setup
 - **QWEN_API_HOST** (env var, non-secret): `ws-ug1fsmrwphwa3o5p.ap-southeast-1.maas.aliyuncs.com`

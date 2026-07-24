@@ -97,7 +97,7 @@ export default function Home() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       serviceName: "", language: "ar", tone: "professional",
-      provider: "openai", businessType: "local", location: "", targetAudience: "",
+      provider: "qwen", businessType: "local", location: "", targetAudience: "",
     },
   });
 
