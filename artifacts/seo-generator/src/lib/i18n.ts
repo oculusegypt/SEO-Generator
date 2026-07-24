@@ -13,8 +13,7 @@ export const translations = {
     executeBtn: "Execute Generation",
     processing: "Processing...",
     standbyTitle: "System Standby",
-    standbyDesc:
-      "Enter your service name and parameters, then execute generation.",
+    standbyDesc: "Enter your service name and parameters, then execute generation.",
     generatedTitle: "Generated Assets",
     optimizedFor: "Optimized for",
     statusSuccess: "STATUS: SUCCESS",
@@ -41,10 +40,7 @@ export const translations = {
       persuasive: "Persuasive",
       friendly: "Friendly",
     },
-    langOptions: {
-      en: "English",
-      ar: "Arabic",
-    },
+    langOptions: { en: "English", ar: "Arabic" },
     providers: {
       openai: "OpenAI GPT-4o",
       gemini: "Google Gemini",
@@ -54,6 +50,17 @@ export const translations = {
     themeLight: "Light mode",
     themeDark: "Dark mode",
     uiLangToggle: "عربي",
+    // Stats
+    statsTitle: "SEO Analysis",
+    seoScore: "SEO Score",
+    titleStat: "Title",
+    metaStat: "Description",
+    keywordsStat: "Keywords",
+    faqStat: "FAQ Items",
+    optimal: "Optimal",
+    needsWork: "Needs Work",
+    totalWords: "Total Words",
+    totalChars: "Total Chars",
   },
   ar: {
     appName: "مركز أوامر SEO",
@@ -94,10 +101,7 @@ export const translations = {
       persuasive: "مقنع",
       friendly: "ودي",
     },
-    langOptions: {
-      en: "الإنجليزية",
-      ar: "العربية",
-    },
+    langOptions: { en: "الإنجليزية", ar: "العربية" },
     providers: {
       openai: "OpenAI GPT-4o",
       gemini: "Google Gemini",
@@ -107,6 +111,17 @@ export const translations = {
     themeLight: "وضع النهار",
     themeDark: "الوضع الليلي",
     uiLangToggle: "English",
+    // Stats
+    statsTitle: "تحليل SEO",
+    seoScore: "نقاط SEO",
+    titleStat: "العنوان",
+    metaStat: "الوصف",
+    keywordsStat: "الكلمات",
+    faqStat: "الأسئلة",
+    optimal: "مثالي",
+    needsWork: "يحتاج تحسين",
+    totalWords: "إجمالي الكلمات",
+    totalChars: "إجمالي الأحرف",
   },
 } as const;
 
