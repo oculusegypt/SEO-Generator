@@ -21,14 +21,20 @@ function getProviderClient(provider: string): { client: OpenAI; model: string } 
         }),
         model: "gemini-2.0-flash",
       };
-    case "qwen":
+    case "qwen": {
+      const qwenHost = process.env.QWEN_API_HOST ?? "dashscope.aliyuncs.com";
+      // MaaS endpoints use /v1 path; Dashscope uses /compatible-mode/v1
+      const qwenBase = qwenHost.includes("maas.aliyuncs")
+        ? `https://${qwenHost}/v1`
+        : `https://${qwenHost}/compatible-mode/v1`;
       return {
         client: new OpenAI({
           apiKey: process.env.QWEN_API_KEY ?? "",
-          baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
+          baseURL: qwenBase,
         }),
-        model: "qwen-plus",
+        model: "qwen-max",
       };
+    }
     case "zhipu":
       return {
         client: new OpenAI({

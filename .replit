@@ -18,3 +18,8 @@ expertMode = true
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 20000
+
+[userenv]
+
+[userenv.shared]
+QWEN_API_HOST = "ws-ug1fsmrwphwa3o5p.ap-southeast-1.maas.aliyuncs.com"
