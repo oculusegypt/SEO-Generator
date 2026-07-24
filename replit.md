@@ -18,7 +18,8 @@
 - Dependencies install with `pnpm install --frozen-lockfile`
 - API build passes and `/api/healthz` responds with `{"status":"ok"}`
 - Frontend production build passes with `PORT=18531 BASE_PATH=/`
-- The imported frontend currently has pre-existing strict TypeScript errors in Framer Motion animation definitions and localized text literals; these do not prevent the Vite runtime or production build
+- Full workspace typecheck passes with `pnpm run typecheck`
+- AI generation requires at least one provider key (`GEMINI_API_KEY`, `QWEN_API_KEY`, `ZHIPU_API_KEY`, or `OPENAI_API_KEY`); none is currently configured
 
 ## Stack
 

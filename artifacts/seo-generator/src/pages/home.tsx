@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   Copy, Terminal, Loader2, Check, Sun, Moon, Languages,
   TrendingUp, Hash, HelpCircle, FileText, Zap, Globe, Search,
@@ -28,7 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { translations, type UiLang } from "@/lib/i18n";
+import { translations, type Translations, type UiLang } from "@/lib/i18n";
 
 /* ─── Schema ─── */
 const formSchema = z.object({
@@ -43,7 +43,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 /* ─── Animation helpers ─── */
-const cardIn = {
+const cardIn: Variants = {
   hidden:  { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.38, ease: "easeOut" } },
 };
@@ -86,7 +86,7 @@ export default function Home() {
     try { return (localStorage.getItem("ui-lang") as UiLang) || "ar"; } catch { return "ar"; }
   });
 
-  const t       = translations[uiLang];
+  const t: Translations = translations[uiLang];
   const isUiRtl = uiLang === "ar";
 
   useEffect(() => {
@@ -344,7 +344,7 @@ function LoadingSkeleton() {
 }
 
 /* ─── Empty state ─── */
-function EmptyState({ t }: { t: typeof translations["en"] }) {
+function EmptyState({ t }: { t: Translations }) {
   const features = [
     { icon: <Layers className="w-4 h-4" />, label: "Schema Markup" },
     { icon: <Brain className="w-4 h-4" />, label: "GEO / AI Overviews" },
@@ -380,7 +380,7 @@ function ResultsView({
 }: {
   result: SeoResult;
   isOutputRtl: boolean;
-  t: typeof translations["en"];
+  t: Translations;
   handleCopy: (text: string, field: string) => void;
 }) {
   const [visibleCount, setVisibleCount] = useState(0);
@@ -603,7 +603,7 @@ function ResultsView({
 ═══════════════════════════════════════════════════════════════ */
 
 function SerpPreviewCard({ result, t, handleCopy }: {
-  result: SeoResult; t: typeof translations["en"]; handleCopy: (text: string, field: string) => void;
+  result: SeoResult; t: Translations; handleCopy: (text: string, field: string) => void;
 }) {
   const s = result.serpPreview;
   return (
@@ -655,7 +655,7 @@ function SerpPreviewCard({ result, t, handleCopy }: {
 }
 
 function SchemaMarkupPanel({ result, t, handleCopy }: {
-  result: SeoResult; t: typeof translations["en"]; handleCopy: (text: string, field: string) => void;
+  result: SeoResult; t: Translations; handleCopy: (text: string, field: string) => void;
 }) {
   const priorityColor = (p: SchemaMarkup["priority"]) =>
     p === "high" ? "bg-red-500/10 text-red-600 border-red-500/20"
@@ -708,7 +708,7 @@ function SchemaMarkupPanel({ result, t, handleCopy }: {
 }
 
 function GeoPanel({ result, t, handleCopy }: {
-  result: SeoResult; t: typeof translations["en"]; handleCopy: (text: string, field: string) => void;
+  result: SeoResult; t: Translations; handleCopy: (text: string, field: string) => void;
 }) {
   const geo = result.geoContent;
   if (!geo) return null;
@@ -819,7 +819,7 @@ function GeoPanel({ result, t, handleCopy }: {
 }
 
 function ContentBriefPanel({ result, t, handleCopy }: {
-  result: SeoResult; t: typeof translations["en"]; handleCopy: (text: string, field: string) => void;
+  result: SeoResult; t: Translations; handleCopy: (text: string, field: string) => void;
 }) {
   const cb = result.contentBrief;
   if (!cb) return null;
@@ -923,7 +923,7 @@ function ContentBriefPanel({ result, t, handleCopy }: {
   );
 }
 
-function EeatPanel({ result, t }: { result: SeoResult; t: typeof translations["en"] }) {
+function EeatPanel({ result, t }: { result: SeoResult; t: Translations }) {
   const eeat = result.eeatSignals;
   if (!eeat) return null;
   const scoreColor = (s: number) =>
@@ -989,7 +989,7 @@ function EeatPanel({ result, t }: { result: SeoResult; t: typeof translations["e
   );
 }
 
-function TechChecklistPanel({ result, t }: { result: SeoResult; t: typeof translations["en"] }) {
+function TechChecklistPanel({ result, t }: { result: SeoResult; t: Translations }) {
   const grouped = result.technicalChecklist.reduce<Record<string, ChecklistItem[]>>((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
     acc[item.category].push(item);
@@ -1057,7 +1057,7 @@ function TechChecklistPanel({ result, t }: { result: SeoResult; t: typeof transl
 }
 
 function SemanticKeywordsCard({ result, t, handleCopy }: {
-  result: SeoResult; t: typeof translations["en"]; handleCopy: (text: string, field: string) => void;
+  result: SeoResult; t: Translations; handleCopy: (text: string, field: string) => void;
 }) {
   const intentColor = (intent: SemanticKeyword["intent"]) =>
     intent === "transactional" ? "text-emerald-600 bg-emerald-500/10 border-emerald-500/20"
@@ -1095,7 +1095,7 @@ function SemanticKeywordsCard({ result, t, handleCopy }: {
 }
 
 function FaqCard({ result, t, handleCopy }: {
-  result: SeoResult; t: typeof translations["en"]; handleCopy: (text: string, field: string) => void;
+  result: SeoResult; t: Translations; handleCopy: (text: string, field: string) => void;
 }) {
   const faqJsonLd = {
     "@context": "https://schema.org", "@type": "FAQPage",

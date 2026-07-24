@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Link } from "wouter";
 import {
   Save, Eye, EyeOff, CheckCircle2, XCircle, ArrowRight,
@@ -20,7 +20,7 @@ import { useGetSettings, useSaveSettings } from "@workspace/api-client-react";
 import type { ProviderSettings } from "@workspace/api-client-react";
 import { useLocalTheme } from "@/hooks/use-theme";
 import { Sun, Moon, Languages } from "lucide-react";
-import { translations, type UiLang } from "@/lib/i18n";
+import { translations, type Translations, type UiLang } from "@/lib/i18n";
 
 /* ─── Model options per provider ─── */
 const GEMINI_MODELS = [
@@ -58,7 +58,7 @@ interface FormValues {
   openaiKey: string; openaiModel: string;
 }
 
-const cardIn = {
+const cardIn: Variants = {
   hidden:  { opacity: 0, y: 16 },
   visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.35, delay: i * 0.07, ease: "easeOut" } }),
 };
@@ -69,7 +69,7 @@ export default function SettingsPage() {
   const [uiLang, setUiLang] = useState<UiLang>(() => {
     try { return (localStorage.getItem("ui-lang") as UiLang) || "ar"; } catch { return "ar"; }
   });
-  const t = translations[uiLang];
+  const t: Translations = translations[uiLang];
   const isRtl = uiLang === "ar";
 
   const { data: settings, isLoading, refetch } = useGetSettings();

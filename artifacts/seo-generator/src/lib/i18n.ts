@@ -275,4 +275,10 @@ export const translations = {
   },
 } as const;
 
-export type Translations = (typeof translations)["en"];
+type Widen<T> =
+  T extends string ? string :
+  T extends readonly unknown[] ? T :
+  T extends object ? { [K in keyof T]: Widen<T[K]> } :
+  T;
+
+export type Translations = Widen<(typeof translations)["en"]>;
