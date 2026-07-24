@@ -1,45 +1,73 @@
-# [Project name]
+# مركز SEO 2026 — Revolutionary SEO Platform
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+منصة توليد SEO ثورية متوافقة مع معايير Google 2026، تجمع أحدث تقنيات السيو والسكيما والأرشفة.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm --filter @workspace/api-server run dev` — API server (port 8080)
+- `pnpm --filter @workspace/seo-generator run dev` — Frontend (port 18531)
+- `pnpm run typecheck` — full typecheck
+- `pnpm run build` — typecheck + build
+- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks & Zod schemas from OpenAPI spec
+- After any OpenAPI change: run codegen before editing frontend
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- API: Express 5 + Pino logging
+- Frontend: React 19 + Vite 7 + Tailwind + shadcn/ui
+- AI: OpenAI-compatible SDK → GPT-4o-mini / Gemini 2.0 Flash / Qwen Plus / Zhipu GLM-4
+- Validation: Zod v4 + Orval codegen
+
+## Features — SEO Package Generated per Query
+
+1. **Core SEO** — Title (50-60c), Meta Description (150-160c), Canonical Slug, Slogan
+2. **Keywords** — 12 primary + semantic/LSI with intent classification (informational/transactional/commercial/navigational)
+3. **Social** — Open Graph + Twitter/X Card tags
+4. **Schema Markup (JSON-LD)** — 5 schema types: LocalBusiness/Service, Organization, BreadcrumbList, WebPage, FAQPage
+5. **FAQ Schema** — 5 questions with full JSON-LD export
+6. **GEO (Generative Engine Optimization)** — Direct Answer for AI Overviews, Featured Snippet (Position Zero), People Also Ask (5 PAA), Voice Search Query, AI Overview Tips
+7. **Technical SEO Checklist** — 19 items across 8 categories (On-Page, Technical, Core Web Vitals, Schema, E-E-A-T, Mobile, Image, GEO)
+8. **SERP Preview** — Google desktop simulation with display URL, breadcrumb, rich results eligibility, estimated CTR
+9. **Content Brief** — Recommended word count, H1, section-by-section outline (H2/H3), internal link suggestions, competitor topics
+10. **E-E-A-T Signals** — Experience, Expertise, Authoritativeness, Trust with score out of 100
+
+## AI Providers
+
+| Provider | Model | Key Env Var |
+|---|---|---|
+| OpenAI | gpt-4o-mini | `OPENAI_API_KEY` |
+| Gemini | gemini-2.0-flash | `GEMINI_API_KEY` |
+| Qwen | qwen-plus | `QWEN_API_KEY` |
+| Zhipu | glm-4-flash | `ZHIPU_API_KEY` |
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/api-spec/openapi.yaml` — OpenAPI source of truth
+- `lib/api-client-react/src/generated/` — generated React Query hooks (do not edit)
+- `lib/api-zod/src/generated/` — generated Zod validators (do not edit)
+- `artifacts/api-server/src/routes/seo.ts` — AI prompt + route handler
+- `artifacts/seo-generator/src/pages/home.tsx` — full UI (sidebar + tabbed results)
+- `artifacts/seo-generator/src/lib/i18n.ts` — Arabic/English translations
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
-
-## Product
-
-_Describe the high-level user-facing capabilities of this app once they exist._
+- OpenAPI-first: all types flow from `openapi.yaml` → codegen → frontend + backend. Never edit generated files.
+- Multi-provider via single OpenAI-compatible SDK — switch base URL + model per provider.
+- Qwen base URL is Dashscope: `https://dashscope.aliyuncs.com/compatible-mode/v1` (not Alibaba Cloud MaaS which requires tenant URL).
+- JSON-LD schema stored as stringified JSON in API response — frontend parses + pretty-prints.
+- Tab-based results UI (Core SEO / Schema / GEO / Content Brief / E-E-A-T / Technical) to prevent overwhelming the user.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Language: Arabic UI default, Arabic/English content toggle
+- Platform: Revolutionary, Google 2026 compliant
+- Design: Dark sidebar + clean results pane with animated card reveal
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- After any OpenAPI spec change, ALWAYS run `pnpm --filter @workspace/api-spec run codegen` before touching frontend or backend.
+- Do NOT edit files in `lib/api-client-react/src/generated/` or `lib/api-zod/src/generated/` — they are overwritten by codegen.
+- API server must be restarted after `seo.ts` changes (it builds to `dist/` via esbuild).
+- Zhipu GLM-4 does not support `response_format: { type: "json_object" }` — use `extractJson()` fallback.
+- Qwen uses Dashscope endpoint, not the old MaaS URL.

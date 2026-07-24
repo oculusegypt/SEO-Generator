@@ -2,8 +2,8 @@ openapi: 3.1.0
 info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
-  version: 0.1.0
-  description: API specification
+  version: 0.2.0
+  description: Revolutionary SEO Platform API — Google 2026 Standards
 servers:
   - url: /api
     description: Base API path
@@ -11,7 +11,7 @@ tags:
   - name: health
     description: Health operations
   - name: seo
-    description: SEO content generation
+    description: SEO content generation — full suite
 paths:
   /healthz:
     get:
@@ -25,11 +25,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
   /seo/generate:
     post:
       operationId: generateSeo
       tags: [seo]
-      summary: Generate SEO content for a service
+      summary: Generate comprehensive SEO package (2026 standards)
       requestBody:
         required: true
         content:
@@ -38,7 +39,7 @@ paths:
               $ref: "#/components/schemas/SeoInput"
       responses:
         "200":
-          description: Generated SEO content
+          description: Full SEO content package
           content:
             application/json:
               schema:
@@ -55,6 +56,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -64,6 +66,7 @@ components:
           type: string
       required:
         - status
+
     SeoInput:
       type: object
       required:
@@ -73,19 +76,38 @@ components:
           type: string
           minLength: 1
           maxLength: 200
+          description: Service, product, or page being optimized
         language:
           type: string
-          description: Language for generated content (ar or en)
+          description: Output language (ar or en)
           default: "ar"
         tone:
-          type: string
-          enum: [professional, friendly, persuasive]
-          default: "professional"
+          $ref: "#/components/schemas/SeoInputTone"
         provider:
+          $ref: "#/components/schemas/SeoInputProvider"
+        businessType:
           type: string
-          enum: [openai, gemini, qwen, zhipu]
-          default: "openai"
-          description: AI provider to use for generation
+          description: Type of business (local, ecommerce, saas, blog, etc.)
+          default: "local"
+        targetAudience:
+          type: string
+          description: Who is the target audience
+          default: ""
+        location:
+          type: string
+          description: City/Country for local SEO
+          default: ""
+
+    SeoInputTone:
+      type: string
+      enum: [professional, friendly, persuasive]
+      default: "professional"
+
+    SeoInputProvider:
+      type: string
+      enum: [openai, gemini, qwen, zhipu]
+      default: "openai"
+
     SeoResult:
       type: object
       required:
@@ -99,17 +121,34 @@ components:
         - twitterDescription
         - canonicalSlug
         - faqItems
+        - schemaMarkups
+        - geoContent
+        - technicalChecklist
+        - serpPreview
+        - contentBrief
+        - eeatSignals
+        - semanticKeywords
       properties:
+        # ── Core SEO ──────────────────────────────────────────
         title:
           type: string
+          description: Page title 50-60 chars with primary keyword
         metaDescription:
           type: string
+          description: Meta description 150-160 chars with CTA
         keywords:
           type: array
           items:
             type: string
+          description: Primary keywords list
         slogan:
           type: string
+          description: Short memorable tagline
+        canonicalSlug:
+          type: string
+          description: URL-friendly slug
+
+        # ── Social / OG ───────────────────────────────────────
         ogTitle:
           type: string
         ogDescription:
@@ -118,26 +157,237 @@ components:
           type: string
         twitterDescription:
           type: string
-        canonicalSlug:
-          type: string
+
+        # ── FAQ (FAQPage Schema) ──────────────────────────────
         faqItems:
           type: array
           items:
             $ref: "#/components/schemas/FaqItem"
+
+        # ── Schema Markup (JSON-LD) ───────────────────────────
+        schemaMarkups:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchemaMarkup"
+          description: Multiple JSON-LD schema blocks for rich results
+
+        # ── GEO — Generative Engine Optimization ─────────────
+        geoContent:
+          $ref: "#/components/schemas/GeoContent"
+
+        # ── Technical SEO Checklist ───────────────────────────
+        technicalChecklist:
+          type: array
+          items:
+            $ref: "#/components/schemas/ChecklistItem"
+
+        # ── SERP Preview data ─────────────────────────────────
+        serpPreview:
+          $ref: "#/components/schemas/SerpPreview"
+
+        # ── Content Brief ─────────────────────────────────────
+        contentBrief:
+          $ref: "#/components/schemas/ContentBrief"
+
+        # ── E-E-A-T Signals ───────────────────────────────────
+        eeatSignals:
+          $ref: "#/components/schemas/EeatSignals"
+
+        # ── Semantic / LSI Keywords ───────────────────────────
+        semanticKeywords:
+          type: array
+          items:
+            $ref: "#/components/schemas/SemanticKeyword"
+
+    # ── Sub-schemas ─────────────────────────────────────────────
+
     FaqItem:
       type: object
-      required:
-        - question
-        - answer
+      required: [question, answer]
       properties:
         question:
           type: string
         answer:
           type: string
+
+    SchemaMarkup:
+      type: object
+      required: [schemaType, label, jsonLd]
+      properties:
+        schemaType:
+          type: string
+          description: Schema.org type (e.g. LocalBusiness, Service, Organization)
+        label:
+          type: string
+          description: Human-readable label for this schema block
+        jsonLd:
+          type: string
+          description: Stringified JSON-LD ready to embed in <script type="application/ld+json">
+        priority:
+          type: string
+          enum: [high, medium, low]
+          description: Implementation priority
+
+    GeoContent:
+      type: object
+      required: [directAnswer, featuredSnippet, peopleAlsoAsk, voiceSearchQuery]
+      properties:
+        directAnswer:
+          type: string
+          description: One-paragraph direct answer optimized for Google AI Overviews
+        featuredSnippet:
+          type: string
+          description: Paragraph snippet (40-60 words) optimized for position zero
+        peopleAlsoAsk:
+          type: array
+          items:
+            $ref: "#/components/schemas/FaqItem"
+          description: 5 PAA questions with concise answers
+        voiceSearchQuery:
+          type: string
+          description: Natural-language voice search query this page should answer
+        aiOverviewTips:
+          type: array
+          items:
+            type: string
+          description: Actionable tips to appear in Google AI Overviews
+
+    ChecklistItem:
+      type: object
+      required: [category, item, priority, status]
+      properties:
+        category:
+          type: string
+          description: Group (On-Page, Technical, Schema, Core Web Vitals, etc.)
+        item:
+          type: string
+          description: The checklist action
+        priority:
+          type: string
+          enum: [critical, high, medium, low]
+        status:
+          type: string
+          enum: [required, recommended, optional]
+        description:
+          type: string
+          description: Why this matters
+
+    SerpPreview:
+      type: object
+      required: [displayUrl, breadcrumb, titlePreview, descriptionPreview]
+      properties:
+        displayUrl:
+          type: string
+          description: Example display URL (e.g. example.com › services › slug)
+        breadcrumb:
+          type: string
+          description: Breadcrumb trail string
+        titlePreview:
+          type: string
+          description: How the title appears in SERP (with truncation indicator)
+        descriptionPreview:
+          type: string
+          description: How meta description appears in SERP
+        richResultEligible:
+          type: array
+          items:
+            type: string
+          description: Rich result types this page qualifies for (FAQ, Review, etc.)
+        estimatedCtr:
+          type: string
+          description: Estimated CTR range with current optimization level
+
+    ContentBrief:
+      type: object
+      required: [recommendedWordCount, suggestedH1, sections, internalLinkSuggestions]
+      properties:
+        recommendedWordCount:
+          type: number
+          description: Recommended word count for the page
+        suggestedH1:
+          type: string
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContentSection"
+        internalLinkSuggestions:
+          type: array
+          items:
+            type: string
+          description: Suggested anchor texts for internal links
+        competitorTopics:
+          type: array
+          items:
+            type: string
+          description: Topics competitors likely cover that this page should include
+
+    ContentSection:
+      type: object
+      required: [heading, headingLevel, purpose, wordCount]
+      properties:
+        heading:
+          type: string
+        headingLevel:
+          type: string
+          enum: [H2, H3, H4]
+        purpose:
+          type: string
+          description: What this section should accomplish
+        wordCount:
+          type: number
+          description: Suggested word count for this section
+        keywordsToInclude:
+          type: array
+          items:
+            type: string
+
+    EeatSignals:
+      type: object
+      required: [experienceSignals, expertiseSignals, authoritativenessSignals, trustSignals]
+      properties:
+        experienceSignals:
+          type: array
+          items:
+            type: string
+          description: Ways to demonstrate first-hand experience
+        expertiseSignals:
+          type: array
+          items:
+            type: string
+          description: Ways to demonstrate subject-matter expertise
+        authoritativenessSignals:
+          type: array
+          items:
+            type: string
+          description: Ways to build authority in the niche
+        trustSignals:
+          type: array
+          items:
+            type: string
+          description: Ways to build trust (certifications, reviews, etc.)
+        overallScore:
+          type: number
+          description: Estimated E-E-A-T score out of 100
+
+    SemanticKeyword:
+      type: object
+      required: [keyword, intent, relevanceScore]
+      properties:
+        keyword:
+          type: string
+        intent:
+          type: string
+          enum: [informational, navigational, transactional, commercial]
+        relevanceScore:
+          type: number
+          description: Relevance score 0-100
+        isLsi:
+          type: boolean
+          description: Is this an LSI (Latent Semantic Indexing) keyword
+
     ErrorResponse:
       type: object
-      required:
-        - error
+      required: [error]
       properties:
         error:
           type: string
