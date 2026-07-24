@@ -22,6 +22,8 @@ import type {
 import type {
   ErrorResponse,
   HealthStatus,
+  ProviderSettings,
+  ProviderSettingsInput,
   SeoInput,
   SeoResult
 } from './api.schemas';
@@ -52,6 +54,154 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getGetSettingsUrl = () => {
+
+
+
+
+  return `/api/settings`
+}
+
+/**
+ * @summary Get current provider settings (keys masked)
+ */
+export const getSettings = async ( options?: RequestInit): Promise<ProviderSettings> => {
+
+  return customFetch<ProviderSettings>(getGetSettingsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetSettingsQueryKey = () => {
+    return [
+    `/api/settings`
+    ] as const;
+    }
+
+
+export const getGetSettingsQueryOptions = <TData = Awaited<ReturnType<typeof getSettings>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSettings>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetSettingsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getSettings>>> = ({ signal }) => getSettings({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getSettings>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetSettingsQueryResult = NonNullable<Awaited<ReturnType<typeof getSettings>>>
+export type GetSettingsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Get current provider settings (keys masked)
+ */
+
+export function useGetSettings<TData = Awaited<ReturnType<typeof getSettings>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getSettings>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetSettingsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getSaveSettingsUrl = () => {
+
+
+
+
+  return `/api/settings`
+}
+
+/**
+ * @summary Save provider API keys and config
+ */
+export const saveSettings = async (providerSettingsInput: ProviderSettingsInput, options?: RequestInit): Promise<ProviderSettings> => {
+
+  return customFetch<ProviderSettings>(getSaveSettingsUrl(),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(providerSettingsInput)
+  }
+);}
+
+
+
+
+
+export const getSaveSettingsMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveSettings>>, TError,{data: BodyType<ProviderSettingsInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof saveSettings>>, TError,{data: BodyType<ProviderSettingsInput>}, TContext> => {
+
+const mutationKey = ['saveSettings'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof saveSettings>>, {data: BodyType<ProviderSettingsInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  saveSettings(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SaveSettingsMutationResult = NonNullable<Awaited<ReturnType<typeof saveSettings>>>
+    export type SaveSettingsMutationBody = BodyType<ProviderSettingsInput>
+    export type SaveSettingsMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Save provider API keys and config
+ */
+export const useSaveSettings = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof saveSettings>>, TError,{data: BodyType<ProviderSettingsInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof saveSettings>>,
+        TError,
+        {data: BodyType<ProviderSettingsInput>},
+        TContext
+      > => {
+      return useMutation(getSaveSettingsMutationOptions(options));
+    }
 
 export const getHealthCheckUrl = () => {
 

@@ -22,4 +22,4 @@ timeoutMs = 20000
 [userenv]
 
 [userenv.shared]
-QWEN_API_HOST = "ws-ug1fsmrwphwa3o5p.ap-southeast-1.maas.aliyuncs.com"
+QWEN_API_HOST = "ws-twcxat39x22mi7rg.ap-southeast-1.maas.aliyuncs.com"

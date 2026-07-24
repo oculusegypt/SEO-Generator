@@ -221,6 +221,40 @@ export interface SeoResult {
   semanticKeywords: SemanticKeyword[];
 }
 
+export interface ProviderConfig {
+  name: string;
+  model: string;
+  keySet: boolean;
+  /** Last 4 chars visible e.g. "sk-...ab12" */
+  keyMasked: string;
+  baseUrl?: string;
+}
+
+export type ProviderSettingsProviders = {
+  openai?: ProviderConfig;
+  gemini?: ProviderConfig;
+  qwen?: ProviderConfig;
+  zhipu?: ProviderConfig;
+};
+
+export interface ProviderSettings {
+  defaultProvider: string;
+  providers: ProviderSettingsProviders;
+}
+
+export interface ProviderSettingsInput {
+  defaultProvider?: string;
+  openaiKey?: string;
+  openaiModel?: string;
+  geminiKey?: string;
+  geminiModel?: string;
+  qwenKey?: string;
+  qwenModel?: string;
+  qwenHost?: string;
+  zhipuKey?: string;
+  zhipuModel?: string;
+}
+
 export interface ErrorResponse {
   error: string;
 }

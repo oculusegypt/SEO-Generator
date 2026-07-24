@@ -12,7 +12,45 @@ tags:
     description: Health operations
   - name: seo
     description: SEO content generation — full suite
+  - name: settings
+    description: Provider API key configuration
 paths:
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get current provider settings (keys masked)
+      responses:
+        "200":
+          description: Current settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProviderSettings"
+    put:
+      operationId: saveSettings
+      tags: [settings]
+      summary: Save provider API keys and config
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProviderSettingsInput"
+      responses:
+        "200":
+          description: Saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProviderSettings"
+        "500":
+          description: Save failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /healthz:
     get:
       operationId: healthCheck
@@ -384,6 +422,64 @@ components:
         isLsi:
           type: boolean
           description: Is this an LSI (Latent Semantic Indexing) keyword
+
+    ProviderConfig:
+      type: object
+      required: [name, model, keySet, keyMasked]
+      properties:
+        name:
+          type: string
+        model:
+          type: string
+        keySet:
+          type: boolean
+        keyMasked:
+          type: string
+          description: Last 4 chars visible e.g. "sk-...ab12"
+        baseUrl:
+          type: string
+
+    ProviderSettings:
+      type: object
+      required: [providers, defaultProvider]
+      properties:
+        defaultProvider:
+          type: string
+        providers:
+          type: object
+          properties:
+            openai:
+              $ref: "#/components/schemas/ProviderConfig"
+            gemini:
+              $ref: "#/components/schemas/ProviderConfig"
+            qwen:
+              $ref: "#/components/schemas/ProviderConfig"
+            zhipu:
+              $ref: "#/components/schemas/ProviderConfig"
+
+    ProviderSettingsInput:
+      type: object
+      properties:
+        defaultProvider:
+          type: string
+        openaiKey:
+          type: string
+        openaiModel:
+          type: string
+        geminiKey:
+          type: string
+        geminiModel:
+          type: string
+        qwenKey:
+          type: string
+        qwenModel:
+          type: string
+        qwenHost:
+          type: string
+        zhipuKey:
+          type: string
+        zhipuModel:
+          type: string
 
     ErrorResponse:
       type: object

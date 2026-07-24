@@ -9,6 +9,95 @@ import * as zod from 'zod';
 
 
 /**
+ * @summary Get current provider settings (keys masked)
+ */
+export const GetSettingsResponse = zod.object({
+  "defaultProvider": zod.string(),
+  "providers": zod.object({
+  "openai": zod.object({
+  "name": zod.string(),
+  "model": zod.string(),
+  "keySet": zod.boolean(),
+  "keyMasked": zod.string().describe('Last 4 chars visible e.g. \"sk-...ab12\"'),
+  "baseUrl": zod.string().optional()
+}).optional(),
+  "gemini": zod.object({
+  "name": zod.string(),
+  "model": zod.string(),
+  "keySet": zod.boolean(),
+  "keyMasked": zod.string().describe('Last 4 chars visible e.g. \"sk-...ab12\"'),
+  "baseUrl": zod.string().optional()
+}).optional(),
+  "qwen": zod.object({
+  "name": zod.string(),
+  "model": zod.string(),
+  "keySet": zod.boolean(),
+  "keyMasked": zod.string().describe('Last 4 chars visible e.g. \"sk-...ab12\"'),
+  "baseUrl": zod.string().optional()
+}).optional(),
+  "zhipu": zod.object({
+  "name": zod.string(),
+  "model": zod.string(),
+  "keySet": zod.boolean(),
+  "keyMasked": zod.string().describe('Last 4 chars visible e.g. \"sk-...ab12\"'),
+  "baseUrl": zod.string().optional()
+}).optional()
+})
+})
+
+
+/**
+ * @summary Save provider API keys and config
+ */
+export const SaveSettingsBody = zod.object({
+  "defaultProvider": zod.string().optional(),
+  "openaiKey": zod.string().optional(),
+  "openaiModel": zod.string().optional(),
+  "geminiKey": zod.string().optional(),
+  "geminiModel": zod.string().optional(),
+  "qwenKey": zod.string().optional(),
+  "qwenModel": zod.string().optional(),
+  "qwenHost": zod.string().optional(),
+  "zhipuKey": zod.string().optional(),
+  "zhipuModel": zod.string().optional()
+})
+
+export const SaveSettingsResponse = zod.object({
+  "defaultProvider": zod.string(),
+  "providers": zod.object({
+  "openai": zod.object({
+  "name": zod.string(),
+  "model": zod.string(),
+  "keySet": zod.boolean(),
+  "keyMasked": zod.string().describe('Last 4 chars visible e.g. \"sk-...ab12\"'),
+  "baseUrl": zod.string().optional()
+}).optional(),
+  "gemini": zod.object({
+  "name": zod.string(),
+  "model": zod.string(),
+  "keySet": zod.boolean(),
+  "keyMasked": zod.string().describe('Last 4 chars visible e.g. \"sk-...ab12\"'),
+  "baseUrl": zod.string().optional()
+}).optional(),
+  "qwen": zod.object({
+  "name": zod.string(),
+  "model": zod.string(),
+  "keySet": zod.boolean(),
+  "keyMasked": zod.string().describe('Last 4 chars visible e.g. \"sk-...ab12\"'),
+  "baseUrl": zod.string().optional()
+}).optional(),
+  "zhipu": zod.object({
+  "name": zod.string(),
+  "model": zod.string(),
+  "keySet": zod.boolean(),
+  "keyMasked": zod.string().describe('Last 4 chars visible e.g. \"sk-...ab12\"'),
+  "baseUrl": zod.string().optional()
+}).optional()
+})
+})
+
+
+/**
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
