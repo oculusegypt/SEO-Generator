@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: seo
+    description: SEO content generation
 paths:
   /healthz:
     get:
@@ -24,6 +26,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /seo/generate:
+    post:
+      operationId: generateSeo
+      tags: [seo]
+      summary: Generate SEO content for a service
+      description: Accepts a service name and optional settings, returns full SEO data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SeoInput"
+      responses:
+        "200":
+          description: Generated SEO content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SeoResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +66,87 @@ components:
           type: string
       required:
         - status
-
+    SeoInput:
+      type: object
+      required:
+        - serviceName
+      properties:
+        serviceName:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Name of the service or product to generate SEO for
+        language:
+          type: string
+          description: Language for generated content (e.g. "ar", "en")
+          default: "ar"
+        tone:
+          type: string
+          description: Tone of the content (professional, friendly, persuasive)
+          enum: [professional, friendly, persuasive]
+          default: "professional"
+    SeoResult:
+      type: object
+      required:
+        - title
+        - metaDescription
+        - keywords
+        - slogan
+        - ogTitle
+        - ogDescription
+        - twitterTitle
+        - twitterDescription
+        - canonicalSlug
+        - faqItems
+      properties:
+        title:
+          type: string
+          description: SEO page title (50-60 chars)
+        metaDescription:
+          type: string
+          description: Meta description (150-160 chars)
+        keywords:
+          type: array
+          items:
+            type: string
+          description: List of SEO keywords
+        slogan:
+          type: string
+          description: Short catchy slogan for the service
+        ogTitle:
+          type: string
+          description: Open Graph title
+        ogDescription:
+          type: string
+          description: Open Graph description
+        twitterTitle:
+          type: string
+          description: Twitter card title
+        twitterDescription:
+          type: string
+          description: Twitter card description
+        canonicalSlug:
+          type: string
+          description: URL-friendly slug for canonical URL
+        faqItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/FaqItem"
+          description: Frequently asked questions for schema markup
+    FaqItem:
+      type: object
+      required:
+        - question
+        - answer
+      properties:
+        question:
+          type: string
+        answer:
+          type: string
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
