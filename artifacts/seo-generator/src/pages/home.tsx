@@ -8,8 +8,9 @@ import {
   TrendingUp, Hash, HelpCircle, FileText, Zap, Globe, Search,
   Shield, BookOpen, Link2, Target, Mic, AlertTriangle,
   CheckCircle2, XCircle, ChevronDown, ChevronRight, Eye, Star,
-  MapPin, Users, Layers, Brain, Award, Network,
+  MapPin, Users, Layers, Brain, Award, Network, Settings,
 } from "lucide-react";
+import { Link } from "wouter";
 import { useLocalTheme } from "@/hooks/use-theme";
 import { useGenerateSeo } from "@workspace/api-client-react";
 import type { SeoResult, SchemaMarkup, ChecklistItem, SemanticKeyword } from "@workspace/api-client-react";
@@ -284,8 +285,8 @@ export default function Home() {
           </Form>
         </div>
 
-        {/* Bottom badge */}
-        <div className="p-4 border-t border-sidebar-border">
+        {/* Bottom — tags + settings link */}
+        <div className="p-4 border-t border-sidebar-border space-y-3">
           <div className="flex flex-wrap gap-1.5">
             {["Schema Markup","GEO/AI","E-E-A-T","Core Web Vitals","SERP Preview"].map(tag => (
               <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary/70 font-mono border border-primary/20">
@@ -293,6 +294,12 @@ export default function Home() {
               </span>
             ))}
           </div>
+          <Link href="/settings">
+            <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 h-9">
+              <Settings className="h-3.5 w-3.5" />
+              {isUiRtl ? "إعدادات المفاتيح ⚙️" : "API Key Settings ⚙️"}
+            </Button>
+          </Link>
         </div>
       </aside>
 
