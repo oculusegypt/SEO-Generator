@@ -10,5 +10,6 @@ export * from './errorResponse';
 export * from './faqItem';
 export * from './healthStatus';
 export * from './seoInput';
+export * from './seoInputProvider';
 export * from './seoInputTone';
 export * from './seoResult';

@@ -6,9 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-/**
- * Tone of the content (professional, friendly, persuasive)
- */
 export type SeoInputTone = typeof SeoInputTone[keyof typeof SeoInputTone];
 
 

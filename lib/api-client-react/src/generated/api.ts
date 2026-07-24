@@ -62,7 +62,6 @@ export const getHealthCheckUrl = () => {
 }
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const healthCheck = async ( options?: RequestInit): Promise<HealthStatus> => {
@@ -140,7 +139,6 @@ export const getGenerateSeoUrl = () => {
 }
 
 /**
- * Accepts a service name and optional settings, returns full SEO data
  * @summary Generate SEO content for a service
  */
 export const generateSeo = async (seoInput: SeoInput, options?: RequestInit): Promise<SeoResult> => {

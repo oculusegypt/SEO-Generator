@@ -9,7 +9,6 @@ import * as zod from 'zod';
 
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -18,34 +17,35 @@ export const HealthCheckResponse = zod.object({
 
 
 /**
- * Accepts a service name and optional settings, returns full SEO data
  * @summary Generate SEO content for a service
  */
 export const generateSeoBodyServiceNameMax = 200;
 
 export const generateSeoBodyLanguageDefault = `ar`;
 export const generateSeoBodyToneDefault = `professional`;
+export const generateSeoBodyProviderDefault = `openai`;
 
 export const GenerateSeoBody = zod.object({
-  "serviceName": zod.string().min(1).max(generateSeoBodyServiceNameMax).describe('Name of the service or product to generate SEO for'),
-  "language": zod.string().default(generateSeoBodyLanguageDefault).describe('Language for generated content (e.g. \"ar\", \"en\")'),
-  "tone": zod.enum(['professional', 'friendly', 'persuasive']).default(generateSeoBodyToneDefault).describe('Tone of the content (professional, friendly, persuasive)')
+  "serviceName": zod.string().min(1).max(generateSeoBodyServiceNameMax),
+  "language": zod.string().default(generateSeoBodyLanguageDefault).describe('Language for generated content (ar or en)'),
+  "tone": zod.enum(['professional', 'friendly', 'persuasive']).default(generateSeoBodyToneDefault),
+  "provider": zod.enum(['openai', 'gemini', 'qwen', 'zhipu']).default(generateSeoBodyProviderDefault).describe('AI provider to use for generation')
 })
 
 export const GenerateSeoResponse = zod.object({
-  "title": zod.string().describe('SEO page title (50-60 chars)'),
-  "metaDescription": zod.string().describe('Meta description (150-160 chars)'),
-  "keywords": zod.array(zod.string()).describe('List of SEO keywords'),
-  "slogan": zod.string().describe('Short catchy slogan for the service'),
-  "ogTitle": zod.string().describe('Open Graph title'),
-  "ogDescription": zod.string().describe('Open Graph description'),
-  "twitterTitle": zod.string().describe('Twitter card title'),
-  "twitterDescription": zod.string().describe('Twitter card description'),
-  "canonicalSlug": zod.string().describe('URL-friendly slug for canonical URL'),
+  "title": zod.string(),
+  "metaDescription": zod.string(),
+  "keywords": zod.array(zod.string()),
+  "slogan": zod.string(),
+  "ogTitle": zod.string(),
+  "ogDescription": zod.string(),
+  "twitterTitle": zod.string(),
+  "twitterDescription": zod.string(),
+  "canonicalSlug": zod.string(),
   "faqItems": zod.array(zod.object({
   "question": zod.string(),
   "answer": zod.string()
-})).describe('Frequently asked questions for schema markup')
+}))
 })
 
 

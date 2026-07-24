@@ -9,9 +9,6 @@ export interface HealthStatus {
   status: string;
 }
 
-/**
- * Tone of the content (professional, friendly, persuasive)
- */
 export type SeoInputTone = typeof SeoInputTone[keyof typeof SeoInputTone];
 
 
@@ -21,17 +18,30 @@ export const SeoInputTone = {
   persuasive: 'persuasive',
 } as const;
 
+/**
+ * AI provider to use for generation
+ */
+export type SeoInputProvider = typeof SeoInputProvider[keyof typeof SeoInputProvider];
+
+
+export const SeoInputProvider = {
+  openai: 'openai',
+  gemini: 'gemini',
+  qwen: 'qwen',
+  zhipu: 'zhipu',
+} as const;
+
 export interface SeoInput {
   /**
-     * Name of the service or product to generate SEO for
      * @minLength 1
      * @maxLength 200
      */
   serviceName: string;
-  /** Language for generated content (e.g. "ar", "en") */
+  /** Language for generated content (ar or en) */
   language?: string;
-  /** Tone of the content (professional, friendly, persuasive) */
   tone?: SeoInputTone;
+  /** AI provider to use for generation */
+  provider?: SeoInputProvider;
 }
 
 export interface FaqItem {
@@ -40,25 +50,15 @@ export interface FaqItem {
 }
 
 export interface SeoResult {
-  /** SEO page title (50-60 chars) */
   title: string;
-  /** Meta description (150-160 chars) */
   metaDescription: string;
-  /** List of SEO keywords */
   keywords: string[];
-  /** Short catchy slogan for the service */
   slogan: string;
-  /** Open Graph title */
   ogTitle: string;
-  /** Open Graph description */
   ogDescription: string;
-  /** Twitter card title */
   twitterTitle: string;
-  /** Twitter card description */
   twitterDescription: string;
-  /** URL-friendly slug for canonical URL */
   canonicalSlug: string;
-  /** Frequently asked questions for schema markup */
   faqItems: FaqItem[];
 }
 

@@ -18,7 +18,6 @@ paths:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -31,7 +30,6 @@ paths:
       operationId: generateSeo
       tags: [seo]
       summary: Generate SEO content for a service
-      description: Accepts a service name and optional settings, returns full SEO data
       requestBody:
         required: true
         content:
@@ -75,16 +73,19 @@ components:
           type: string
           minLength: 1
           maxLength: 200
-          description: Name of the service or product to generate SEO for
         language:
           type: string
-          description: Language for generated content (e.g. "ar", "en")
+          description: Language for generated content (ar or en)
           default: "ar"
         tone:
           type: string
-          description: Tone of the content (professional, friendly, persuasive)
           enum: [professional, friendly, persuasive]
           default: "professional"
+        provider:
+          type: string
+          enum: [openai, gemini, qwen, zhipu]
+          default: "openai"
+          description: AI provider to use for generation
     SeoResult:
       type: object
       required:
@@ -101,38 +102,28 @@ components:
       properties:
         title:
           type: string
-          description: SEO page title (50-60 chars)
         metaDescription:
           type: string
-          description: Meta description (150-160 chars)
         keywords:
           type: array
           items:
             type: string
-          description: List of SEO keywords
         slogan:
           type: string
-          description: Short catchy slogan for the service
         ogTitle:
           type: string
-          description: Open Graph title
         ogDescription:
           type: string
-          description: Open Graph description
         twitterTitle:
           type: string
-          description: Twitter card title
         twitterDescription:
           type: string
-          description: Twitter card description
         canonicalSlug:
           type: string
-          description: URL-friendly slug for canonical URL
         faqItems:
           type: array
           items:
             $ref: "#/components/schemas/FaqItem"
-          description: Frequently asked questions for schema markup
     FaqItem:
       type: object
       required:

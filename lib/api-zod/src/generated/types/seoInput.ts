@@ -5,17 +5,18 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { SeoInputProvider } from './seoInputProvider';
 import type { SeoInputTone } from './seoInputTone';
 
 export interface SeoInput {
   /**
-     * Name of the service or product to generate SEO for
      * @minLength 1
      * @maxLength 200
      */
   serviceName: string;
-  /** Language for generated content (e.g. "ar", "en") */
+  /** Language for generated content (ar or en) */
   language?: string;
-  /** Tone of the content (professional, friendly, persuasive) */
   tone?: SeoInputTone;
+  /** AI provider to use for generation */
+  provider?: SeoInputProvider;
 }
