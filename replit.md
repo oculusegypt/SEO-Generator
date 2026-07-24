@@ -34,12 +34,33 @@
 
 ## AI Providers
 
-| Provider | Model | Key Env Var |
-|---|---|---|
-| OpenAI | gpt-4o-mini | `OPENAI_API_KEY` |
-| Gemini | gemini-2.0-flash | `GEMINI_API_KEY` |
-| Qwen | qwen-plus | `QWEN_API_KEY` |
-| Zhipu | glm-4-flash | `ZHIPU_API_KEY` |
+| Provider | Model | Secret (Replit Secrets) | Env Var | Status |
+|---|---|---|---|---|
+| OpenAI | gpt-4o-mini | `OPENAI_API_KEY` | — | Optional |
+| Gemini | gemini-2.0-flash | `GEMINI_API_KEY` | — | ✅ Configured |
+| Qwen | qwen-max | `QWEN_API_KEY` | `QWEN_API_HOST` | ✅ Configured |
+| Zhipu | glm-4-flash | `ZHIPU_API_KEY` | — | ✅ Configured |
+
+### Qwen MaaS Setup
+- **QWEN_API_HOST** (env var, non-secret): `ws-ug1fsmrwphwa3o5p.ap-southeast-1.maas.aliyuncs.com`
+- **QWEN_API_KEY** (Replit Secret): stored encrypted, never in code
+- Base URL auto-detected: MaaS hosts → `/v1`, Dashscope → `/compatible-mode/v1`
+
+### Zhipu GLM Setup
+- **ZHIPU_API_KEY** (Replit Secret): stored encrypted
+- Base URL: `https://open.bigmodel.cn/api/paas/v4/`
+- Model: `glm-4-flash`
+
+### Gemini Setup
+- **GEMINI_API_KEY** (Replit Secret): stored encrypted
+- Base URL: `https://generativelanguage.googleapis.com/v1beta/openai/`
+- Model: `gemini-2.0-flash`
+
+### Security Notes
+- All API keys are stored as **Replit Secrets** (AES-256 encrypted at rest)
+- Keys are injected as environment variables at runtime — never written to files
+- Never commit `.env` files or hardcode key values in source code
+- To rotate a key: go to Replit Secrets panel → update the value → restart the API Server workflow
 
 ## Where things live
 
