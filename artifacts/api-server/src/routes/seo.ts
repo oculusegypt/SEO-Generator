@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import OpenAI from "openai";
+import { jsonrepair } from "jsonrepair";
 import { GenerateSeoBody } from "@workspace/api-zod";
 import { IMPORTED_QWEN_DEFAULT_MODEL } from "../lib/imported-provider-config.js";
 import { loadConfig, resolveKey } from "./settings.js";
@@ -13,7 +14,7 @@ function getProviderClient(provider: string): { client: OpenAI; model: string } 
   switch (provider) {
     case "gemini": {
       const key   = resolveKey(cfg.gemini?.key, "GEMINI_API_KEY") ?? "";
-      const model = cfg.gemini?.model || "gemini-2.5-flash";
+      const model = cfg.gemini?.model || "gemini-2.0-flash";
       return {
         client: new OpenAI({
           apiKey:  key,
@@ -108,7 +109,8 @@ CRITICAL RULES:
 2. ALL text content MUST be in ${langLabel} language (JSON keys stay in English).
 3. Tone: ${toneLabel}.
 4. Generate real, actionable content — not templates.
-5. JSON must be perfectly parseable.`;
+5. JSON must be perfectly parseable.
+6. The "jsonLd" fields must be plain JSON OBJECTS (not strings). Do NOT stringify them.`;
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -135,11 +137,11 @@ Return ONLY this JSON (all text values in ${langLabel}, no extra fields):
     {"question": "Q5?","answer": "Detailed answer."}
   ],
   "schemaMarkups": [
-    {"schemaType": "${businessType === "local" ? "LocalBusiness" : "Service"}","label": "Primary Business Schema","priority": "high","jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"${businessType === "local" ? "LocalBusiness" : "Service"}\",\"name\":\"Service name here\",\"description\":\"Brief description\",\"url\":\"https://example.com\"}"},
-    {"schemaType": "Organization","label": "Organization Schema","priority": "high","jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"Business name\",\"url\":\"https://example.com\",\"logo\":{\"@type\":\"ImageObject\",\"url\":\"https://example.com/logo.png\"}}"},
-    {"schemaType": "BreadcrumbList","label": "Breadcrumb","priority": "medium","jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"BreadcrumbList\",\"itemListElement\":[{\"@type\":\"ListItem\",\"position\":1,\"name\":\"Home\",\"item\":\"https://example.com\"},{\"@type\":\"ListItem\",\"position\":2,\"name\":\"Services\",\"item\":\"https://example.com/services\"},{\"@type\":\"ListItem\",\"position\":3,\"name\":\"Slug page\",\"item\":\"https://example.com/services/slug\"}]}"},
-    {"schemaType": "FAQPage","label": "FAQ Rich Results","priority": "high","jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[{\"@type\":\"Question\",\"name\":\"FAQ Q1\",\"acceptedAnswer\":{\"@type\":\"Answer\",\"text\":\"FAQ A1\"}}]}"},
-    {"schemaType": "WebPage","label": "WebPage","priority": "medium","jsonLd": "{\"@context\":\"https://schema.org\",\"@type\":\"WebPage\",\"name\":\"Page title\",\"dateModified\":\"${today}\",\"inLanguage\":\"${language}\"}"}
+    {"schemaType": "${businessType === "local" ? "LocalBusiness" : "Service"}","label": "Primary Business Schema","priority": "high","jsonLd": {"@context":"https://schema.org","@type":"Service","name":"Service name here","description":"Brief description","url":"https://example.com"}},
+    {"schemaType": "Organization","label": "Organization Schema","priority": "high","jsonLd": {"@context":"https://schema.org","@type":"Organization","name":"Business name","url":"https://example.com","logo":{"@type":"ImageObject","url":"https://example.com/logo.png"}}},
+    {"schemaType": "BreadcrumbList","label": "Breadcrumb","priority": "medium","jsonLd": {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://example.com"}]}},
+    {"schemaType": "FAQPage","label": "FAQ Rich Results","priority": "high","jsonLd": {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"FAQ Q1","acceptedAnswer":{"@type":"Answer","text":"FAQ A1"}}]}},
+    {"schemaType": "WebPage","label": "WebPage","priority": "medium","jsonLd": {"@context":"https://schema.org","@type":"WebPage","name":"Page title","dateModified":"${today}","inLanguage":"${language}"}}
   ],
   "geoContent": {
     "directAnswer": "2-3 sentence direct answer optimized for Google AI Overviews in ${langLabel}",
@@ -234,10 +236,14 @@ Return ONLY this JSON (all text values in ${langLabel}, no extra fields):
     try {
       result = JSON.parse(jsonStr) as Record<string, unknown>;
     } catch {
-      // Last resort: try to salvage by extracting just what we can
-      req.log.warn({ provider, snippet: jsonStr.slice(0, 200) }, "JSON parse failed, trying rescue");
-      res.status(500).json({ error: "خطأ في تحليل الاستجابة. حاول مرة أخرى أو جرب مزوداً آخر." });
-      return;
+      // Attempt repair of malformed / truncated JSON before giving up
+      req.log.warn({ provider, snippet: jsonStr.slice(0, 200) }, "JSON parse failed, trying jsonrepair");
+      try {
+        result = JSON.parse(jsonrepair(jsonStr)) as Record<string, unknown>;
+      } catch {
+        res.status(500).json({ error: "خطأ في تحليل الاستجابة. حاول مرة أخرى أو جرب مزوداً آخر." });
+        return;
+      }
     }
 
     // Normalize arrays/objects
@@ -250,6 +256,16 @@ Return ONLY this JSON (all text values in ${langLabel}, no extra fields):
     if (!result.serpPreview)    result.serpPreview     = { displayUrl: "", breadcrumb: "", titlePreview: result.title, descriptionPreview: result.metaDescription, richResultEligible: [], estimatedCtr: "" };
     if (!result.contentBrief)  result.contentBrief    = { recommendedWordCount: 1500, suggestedH1: result.title, sections: [], internalLinkSuggestions: [], competitorTopics: [] };
     if (!result.eeatSignals)   result.eeatSignals     = { experienceSignals: [], expertiseSignals: [], authoritativenessSignals: [], trustSignals: [], overallScore: 50 };
+
+    // Normalize jsonLd: models may return it as an object instead of a string
+    if (Array.isArray(result.schemaMarkups)) {
+      result.schemaMarkups = (result.schemaMarkups as Array<Record<string, unknown>>).map((s) => {
+        if (s.jsonLd && typeof s.jsonLd === "object") {
+          return { ...s, jsonLd: JSON.stringify(s.jsonLd) };
+        }
+        return s;
+      });
+    }
 
     res.json(result);
   } catch (err: unknown) {

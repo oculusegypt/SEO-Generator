@@ -1,1 +1,2 @@
 - [Workflow shell compatibility](workflow-shell-compatibility.md) — Replit workflows may run under POSIX sh, so avoid Bash-only process-control syntax.
+- [SEO provider integration lessons](seo-provider-lessons.md) — path resolution for attached_assets, Qwen quota, jsonLd escaping, Gemini model names, settings priority.

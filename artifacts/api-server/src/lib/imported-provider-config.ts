@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 export interface ImportedProviderConfig {
   qwenKey?: string;
@@ -7,9 +8,14 @@ export interface ImportedProviderConfig {
   qwenBaseUrl?: string;
 }
 
-export const IMPORTED_QWEN_DEFAULT_MODEL = "qwen3.7-flash";
+export const IMPORTED_QWEN_DEFAULT_MODEL = "qwen-plus";
 
-const ASSETS_DIR = join(process.cwd(), "attached_assets");
+// Resolve workspace root regardless of cwd.
+// Compiled output lands at artifacts/api-server/dist/index.mjs
+// so going up 3 levels reaches the workspace root.
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const WORKSPACE_ROOT = join(__dirname, "..", "..", "..");
+const ASSETS_DIR = join(WORKSPACE_ROOT, "attached_assets");
 const IMPORT_FILE_PREFIX =
   "Pasted--qwen3-5-122b-a10b-1-000-000-qwen-vl-ocr-2025-11-20-1-0_";
 

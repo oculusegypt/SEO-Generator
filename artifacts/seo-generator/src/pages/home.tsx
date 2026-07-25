@@ -592,7 +592,7 @@ function ResultsView({ result, isOutputRtl, form, t, cp }: {
                     <AccordionTrigger className="text-sm hover:text-primary text-start py-3">
                       <div className="flex items-center gap-2">
                         <Badge variant="outline" className={`text-[10px] ${
-                          s_.priority === "high" || s_.priority === "critical" ? "border-primary/30 bg-primary/5 text-primary" : "border-border"
+                          s_.priority === "high" ? "border-primary/30 bg-primary/5 text-primary" : "border-border"
                         }`}>{s_.schemaType}</Badge>
                         <span className="font-normal text-muted-foreground">{s_.label}</span>
                       </div>
