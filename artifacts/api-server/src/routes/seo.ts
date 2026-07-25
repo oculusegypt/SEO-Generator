@@ -1,11 +1,8 @@
 import { Router, type IRouter } from "express";
 import OpenAI from "openai";
 import { GenerateSeoBody } from "@workspace/api-zod";
-import {
-  IMPORTED_QWEN_DEFAULT_MODEL,
-  loadConfig,
-  resolveKey,
-} from "./settings.js";
+import { IMPORTED_QWEN_DEFAULT_MODEL } from "../lib/imported-provider-config.js";
+import { loadConfig, resolveKey } from "./settings.js";
 
 const router: IRouter = Router();
 
